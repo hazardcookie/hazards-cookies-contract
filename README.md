@@ -16,9 +16,12 @@ If the block number is a even number, anyone can claim this key.
 Anyone can claim this key if they spend more than the previous claimer.
 
 ## Deployment Details
-Deployer: `0x67F141221bbDa7162373eC57aCbFa4E9564750e8` \n
-Deployed to: `0xDA8969c0E047e12bfda6281283C7A7Bfdd0B70F5` \n 
-Transaction hash: `0x06dadc0fe29d695592000d507155a8f7c5d823aabbe564c2406c5e5d5509a3fe` \n
+Deployer: `0x67F141221bbDa7162373eC57aCbFa4E9564750e8`
+
+Deployed to: `0xDA8969c0E047e12bfda6281283C7A7Bfdd0B70F5`
+
+Transaction hash: `0x06dadc0fe29d695592000d507155a8f7c5d823aabbe564c2406c5e5d5509a3fe`
+
 rpc: `https://rpc-evm-sidechain.xrpl.org`
 
 ## Deploying the contract and verifying
