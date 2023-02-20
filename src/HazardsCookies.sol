@@ -4,9 +4,9 @@ pragma solidity ^ 0.8 .13;
 import "lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
 import "lib/openzeppelin-contracts/contracts/utils/Base64.sol";
 
-/// @title Hazards Cookies
+/// @title Hazard's Cookies 
 /// @author @hazardcookie
-/// @notice This NFT contract with 5 cookies, each claimable with different conditions
+/// @notice This NFT contract has 5 cookies, each claimable with different conditions
 contract HazardsCookiesV4 is ERC721 {
     uint256 public constant COOKIE_OF_POWER = 1;
     uint256 public constant COOKIE_OF_WISDOM = 2;
