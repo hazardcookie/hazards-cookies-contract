@@ -34,39 +34,6 @@ contract CookiesTest is Test {
         }
     }
 
-    /// @notice test the getCookieURIs function
-    function testGetCookieURIs()public {
-        string[] memory uris;
-        uris = cookies.getCookieURIs();
-        for (uint256 i = 0; i < 5; i ++) {
-            emit log_named_string(Strings.toString(i), uris[i]);
-        }
-    }
-
-    /// @notice tests getCookieOwners()
-    function testGetCookieOwners()public {
-        address[] memory owners;
-        owners = cookies.getCookieOwners();
-        for (uint256 i = 0; i < 5; i ++) {
-            emit log_named_address(Strings.toString(i), owners[i]);
-        }
-    }
-
-    /// @notice Tests contract address
-    function testContractAddress()public {
-        emit log_named_address("Contract Address: ", address(cookies));
-    }
-
-    /// @notice Tests contract owner
-    function testContractOwner()public {
-        emit log_named_address("Contract Owner: ", address(this));
-    }
-
-    /// @notice Tests the tokenURI function
-    function testTokenURI()public {
-        emit log_named_string("Token URI: ", cookies.tokenURI(1));
-    }
-
     /// @notice Tests the buyCookieOfWealth function
     /// @dev Cookie of Wealth is NFT #5 and should be owned by bob
     function testBuyCookieOfWealth()public { // Bob buys Cookie of Wealth
@@ -88,9 +55,12 @@ contract CookiesTest is Test {
     }
 
     /// @notice Tests the buyCookieOfWealth function with alice buying from bob
-    /// @dev Cookie of Wealth is NFT #5 and should be owned by alice
-    /// @dev Bob should have his ether returned back
-    function testBuyCookieOfWealthFromPass()public { // Bob buys Cookie of Wealth
+    function testBuyCookieOfWealthFromPass()public { 
+        /// @notice Tests the passcase of alice buying from bob
+        /// @dev Cookie of Wealth is NFT #5 and should be owned by alice
+        /// @dev Bob should have his ether returned back in this pass case   
+
+        // Bob buys Cookie of Wealth to setup test    
         vm.startPrank(address(bob));
         cookies.buyCookieOfWealth {
             value : SMOL_BUY_AMOUNT
@@ -133,56 +103,43 @@ contract CookiesTest is Test {
 
         // Bob should have his ether returned back
         assertEq(bob.balance, DEAL_AMOUNT);
-    }
 
-    /// @notice Tests the buyCookieOfWealth function with alice buying from bob
-    /// @dev Cookie of Wealth is NFT #5 and should be owned by bob
-    /// @dev Bob should not have his ether returned back
-    /// @dev TODO: Test to make sure funds wern't returned to bob
-    function testBuyCookieOfWealthFromFail()public { // Bob buys Cookie of Wealth
+
+        /// @notice Tests the failcase of alice buying from bob
+        /// @dev Cookie of Wealth is NFT #5 and should be owned by bob
+        /// @dev Bob tries to buys Cookie of Wealth, fails, and should not own Cookie of Wealth
+        /// @dev Alice should not have her ether returned back
+        /// @dev Alice should own Cookie of Wealth
+        assertEq(cookies.lookupOwner(5), alice);
+
+        // Bob tries to buy Cookie of Wealth from Bob
+        // Anticipated revert because bob does not have enough ether
         vm.startPrank(address(bob));
-        cookies.buyCookieOfWealth {
-            value : SMOL_BUY_AMOUNT
-        }();
-        vm.stopPrank();
-
-        // Bob should own Cookie of Wealth
-        assertEq(cookies.lookupOwner(5), bob);
-
-        // Log NFT owners after Bob buys Cookie of Wealth
-        emit log_string("NFT Owners: ");
-        for (uint256 i = 1; i <= 5; i ++) {
-            address owner = cookies.lookupOwner(i);
-            emit log_named_address(Strings.toString(i), owner);
-        }
-
-        // Alice tries to buy Cookie of Wealth from Bob
-        // Anticipated revert because alice does not have enough ether
-        vm.startPrank(address(alice));
         vm.expectRevert("Not enough funds");
         cookies.buyCookieOfWealth {
             value : SMOL_BUY_AMOUNT
         }();
         vm.stopPrank();
 
-        // Bob should still own Cookie of Wealth
-        assertEq(cookies.lookupOwner(5), bob);
+        // Alice should still own Cookie of Wealth
+        assertEq(cookies.lookupOwner(5), alice);
 
-        // Log NFT owners after Alice tries to buy Cookie of Wealth
+        // Log NFT owners after Bob tries to buy Cookie of Wealth
         emit log_string("NFT Owners: ");
         for (uint256 i = 1; i <= 5; i ++) {
             address owner = cookies.lookupOwner(i);
             emit log_named_address(Strings.toString(i), owner);
         }
 
-        // Bob should not have his ether returned back
-        assertEq(bob.balance, DEAL_AMOUNT - SMOL_BUY_AMOUNT);
+        // Alice should not have her ether returned back
+        assertEq(alice.balance, DEAL_AMOUNT - LARGE_BUY_AMOUNT);
     }
 
     /// @notice Tests the takeCookieOfWar function
-    /// @dev Cookie of War is NFT #4 and should be owned by after takeCookieOfWar is called
-    /// @dev assumes that the block number is even
-    function testTakeCookieOfWarPass()public { // Starts prank on bob and rolls the vm to an even block number
+    function testTakeCookieOfWar()public { 
+        /// @notice Tests the pass case of the takeCookieOfWar function
+        /// @dev Cookie of War is NFT #4 and should be owned by after takeCookieOfWar is called
+        /// @dev Starts prank on bob and rolls the vm to an even block number
         vm.startPrank(address(bob));
         vm.roll(69420);
         emit log_named_uint("Block Number: ", block.number);
@@ -200,26 +157,24 @@ contract CookiesTest is Test {
             address owner = cookies.lookupOwner(i);
             emit log_named_address(Strings.toString(i), owner);
         }
-    }
 
-    /// @notice Tests the takeCookieOfWar function
-    /// @dev Cookie of War is NFT #4 and should be owned by the contract deployer after it is called
-    /// @dev assumes that the block number is odd
-    function testTakeCookieOfWarFail()public { // Starts prank on bob and rolls the vm to an odd block number
-        vm.startPrank(address(bob));
+        /// @notice Tests the fail case of the takeCookieOfWar function
+        /// @dev Cookie of War is NFT #4 and should be owned by the bob deployer after Alice calls it
+        /// @dev Starts prank on Alice and rolls the vm to an odd block number
+        vm.startPrank(address(alice));
         vm.roll(69421);
         emit log_named_uint("Block Number: ", block.number);
 
-        // Bob tries to buy Cookie of War on odd block number
+        // Alice tries to buy Cookie of War on odd block number
         // Anticipated revert because the block number is odd
         vm.expectRevert("Not an even block");
         cookies.takeCookieOfWar();
         vm.stopPrank();
 
-        // Contract deployer should still own Cookie of War
-        assertEq(cookies.lookupOwner(4), address(this));
+        // Bob should still own the Cookie of War
+        assertEq(cookies.lookupOwner(4), address(bob));
 
-        // Log NFT owners after Bob tries to take Cookie of War
+        // Log NFT owners after Alice tries to take Cookie of War
         emit log_string("NFT Owners: ");
         for (uint256 i = 1; i <= 5; i ++) {
             address owner = cookies.lookupOwner(i);
@@ -227,12 +182,12 @@ contract CookiesTest is Test {
         }
     }
 
-    /// @notice Tests the takeCookieOfTime function with a block timestamp that is 1 week greater
-    /// @dev Cookie of Time is NFT #3 and should be owned by bob after it is called
-    /// @dev assumes that the block timestamp is greater than the previous block timestamp by 1 week
-    function testTakeCookieOfTimePass()public {
-        // Starts prank on bob and rolls the vm to a block timestamp 1 week greater
-        // Logs the block timestamp before and after the warp
+    /// @notice Tests the takeCookieOfTime function
+    function testTakeCookieOfTime()public {
+        /// @notice Tests the passing case
+        /// @dev Starts prank on bob and rolls the vm to a block timestamp 1 week greater
+        /// @dev Logs the block timestamp before and after the warp
+        /// @dev Cookie of Time is NFT #3 and should be owned by bob after it is called
         vm.startPrank(address(bob));
         emit log_named_uint("Block Timestamp: ", block.timestamp);
         vm.warp(block.timestamp + 604800);
@@ -251,27 +206,23 @@ contract CookiesTest is Test {
             address owner = cookies.lookupOwner(i);
             emit log_named_address(Strings.toString(i), owner);
         }
-    }
 
-    /// @notice Tests the takeCookieOfTime function with a block timestamp that is 1 week less
-    /// @dev Cookie of Time is NFT #3 and should be owned by the contract deployer after it is called
-    /// @dev assumes that the block timestamp is less than the previous block timestamp by 1 week
-    function testTakeCookieOfTimeFail()public {
-        // Starts prank on bob and rolls the vm to a block timestamp slightly less then 1 week
-        // Logs the block timestamp before and after the warp
-        vm.startPrank(address(bob));
+        /// @notice Tests the failing case of takeCookieOfTime
+        /// @dev Starts prank on alice and rolls the vm to a block timestamp slightly less then 1 week
+        /// @dev Logs the block timestamp before and after the warp
+        vm.startPrank(address(alice));
         emit log_named_uint("Block Timestamp: ", block.timestamp);
         vm.warp(block.timestamp + 604798);
         emit log_named_uint("After Roll Block Timestamp: ", block.timestamp);
 
-        // Bob tries to buy Cookie of Time on a block timestamp slightly less than 1 week
+        // Alice tries to buy Cookie of Time on a block timestamp slightly less than 1 week
         // Anticipated revert because the block timestamp is less than 1 week
         vm.expectRevert("Not a week");
         cookies.takeCookieOfTime();
         vm.stopPrank();
 
-
-        assertEq(cookies.lookupOwner(3), address(this));
+        // Bob should still own Cookie of Time
+        assertEq(cookies.lookupOwner(3), address(bob));
 
         // Log NFT owners after Bob tries to take Cookie of Time
         emit log_string("NFT Owners: ");
@@ -315,16 +266,16 @@ contract CookiesTest is Test {
         emit log_named_uint("Test Number: ", uint256(keccak256(abi.encodePacked(testNumber2))));
         emit log_named_uint("Last Number: ", uint256(keccak256(abi.encodePacked(cookies.lastNumber))));
 
-        // Bob tries to buy Cookie of Wisdom on a hashed input number less than the hashed previous number
+        // Alice tries to buy Cookie of Wisdom on a hashed input number less than the hashed previous number
         // Anticipated revert because the hashed input number is less than the hashed previous number
         vm.expectRevert("Not greater than previous");
         cookies.takeCookieOfWisdom(testNumber2);
         vm.stopPrank();
 
-        // Contract deployer should own Cookie of Wisdom
+        // Bob should still own the Cookie of Wisdom
         assertEq(cookies.lookupOwner(2), address(bob));
 
-        // Log NFT owners after Bob tries to take Cookie of Wisdom
+        // Log NFT owners after Alice tries to take Cookie of Wisdom
         emit log_string("NFT Owners: ");
         for (uint256 i = 1; i <= 5; i ++) {
             address owner = cookies.lookupOwner(i);
@@ -365,16 +316,16 @@ contract CookiesTest is Test {
         vm.roll(69421);
         emit log_named_uint("Block Number: ", block.number);
 
-        // Bob tries to buy Cookie of Power on a block number not ending in 420
+        // Alice tries to buy Cookie of Power on a block number not ending in 420
         // Anticipated revert because the block number does not end in 420
         vm.expectRevert("Not a 420 block");
         cookies.takeCookieOfPower();
         vm.stopPrank();
 
-        // Contract deployer should own Cookie of Power
+        // Bob should still own Cookie of Power
         assertEq(cookies.lookupOwner(1), address(bob));
 
-        // Contract deployer should own Cookie of Power
+        // Log NFT owners after Alice tries to take Cookie of Power
         emit log_string("NFT Owners: ");
         for (uint256 i = 1; i <= 5; i ++) {
             address owner = cookies.lookupOwner(i);
@@ -417,17 +368,16 @@ contract CookiesTest is Test {
         vm.startPrank(address(alice));
         emit log_named_uint("Block Number: ", block.number);
 
-        // Bob tries to buy Cookie of H4X0R
+        // Alice tries to buy Cookie of H4X0R
         // Anticipated revert because Bob does not own any of the other cookies
         vm.expectRevert("Must own one of the other cookies");
         cookies.takeCookieOfH4X0R();
 
-
-        // Contract deployer should own Cookie of H4X0R
+        // Bob should own Cookie of H4X0R
         assertEq(cookies.lookupOwner(1337), address(bob));
         vm.stopPrank();
 
-        // Log NFT owners after Bob tries to take Cookie of H4X0R
+        // Log NFT owners after Alice tries to take Cookie of H4X0R
         emit log_string("NFT Owners: ");
         for (uint256 i = 1; i <= 6; i ++) {
             if (i == 6) {
