@@ -283,16 +283,17 @@ contract CookiesTest is Test {
 
 
     /// @notice Tests the takeCookieOfWisdom function
-    /// @dev Cookie of Wisdom is NFT #2 and should be owned by bob after it is called
-    /// @dev assumes that the hashed input number is greater than the hashed previous number
-    function testTakeCookieOfWisdomPass()public { // Starts prank on bob and logs the hashed input number and the hashed previous number
+    function testTakeCookieOfWisdom()public { // Starts prank on bob and logs the hashed input number and the hashed previous number
+        /// @notice Tests the passing case of takeCookieOfWisdom
+        /// @dev Cookie of Wisdom is NFT #2 and should be owned by bob after it is called
+        /// @dev assumes that the hashed input number is greater than the hashed previous number
         vm.startPrank(address(bob));
-        uint testNumber = 1;
-        emit log_named_uint("Test Number: ", uint256(keccak256(abi.encodePacked(testNumber))));
+        uint testNumber1 = 1;
+        emit log_named_uint("Test Number: ", uint256(keccak256(abi.encodePacked(testNumber1))));
         emit log_named_uint("Last Number: ", uint256(keccak256(abi.encodePacked(cookies.lastNumber))));
 
         // Bob buys Cookie of Wisdom on a hashed input number greater than the hashed previous number
-        cookies.takeCookieOfWisdom(testNumber);
+        cookies.takeCookieOfWisdom(testNumber1);
         vm.stopPrank();
 
         // Bob should own Cookie of Wisdom
@@ -304,25 +305,24 @@ contract CookiesTest is Test {
             address owner = cookies.lookupOwner(i);
             emit log_named_address(Strings.toString(i), owner);
         }
-    }
 
-    /// @notice Tests the takeCookieOfWisdom function
-    /// @dev Cookie of Wisdom is NFT #2 and should be owned by the contract deployer after it is called
-    /// @dev assumes that the hashed input number is less than the hashed previous number
-    function testTakeCookieOfWisdomFail()public { // Starts prank on bob and logs the hashed input number and the hashed previous number
-        vm.startPrank(address(bob));
-        uint testNumber = 0;
-        emit log_named_uint("Test Number: ", uint256(keccak256(abi.encodePacked(testNumber))));
+        /// @notice Tests the failing case of takeCookieOfWisdom
+        /// @dev Cookie of Wisdom is NFT #2 and should be owned by bob after it is called
+        /// @dev assumes that the hashed input number is less than the hashed previous number 
+        /// @dev when alice tries to claim it
+        vm.startPrank(address(alice));
+        uint testNumber2 = 0;
+        emit log_named_uint("Test Number: ", uint256(keccak256(abi.encodePacked(testNumber2))));
         emit log_named_uint("Last Number: ", uint256(keccak256(abi.encodePacked(cookies.lastNumber))));
 
         // Bob tries to buy Cookie of Wisdom on a hashed input number less than the hashed previous number
         // Anticipated revert because the hashed input number is less than the hashed previous number
         vm.expectRevert("Not greater than previous");
-        cookies.takeCookieOfWisdom(testNumber);
+        cookies.takeCookieOfWisdom(testNumber2);
         vm.stopPrank();
 
         // Contract deployer should own Cookie of Wisdom
-        assertEq(cookies.lookupOwner(2), address(this));
+        assertEq(cookies.lookupOwner(2), address(bob));
 
         // Log NFT owners after Bob tries to take Cookie of Wisdom
         emit log_string("NFT Owners: ");
