@@ -334,11 +334,12 @@ contract CookiesTest is Test {
 
 
     /// @notice Tests the takeCookieOfPower function
-    /// @dev Cookie of Power is NFT #1 and should be owned by bob after it is called
-    /// @dev assumes that the block number ends in 420
-    function testTakeCookieOfPowerPass()public {
-        // Starts prank on bob and rolls the vm to a block number ending in 420
-        // Logs the block number after the warp
+    function testTakeCookieOfPower()public {
+        /// @notice Tests the pass case of the takeCookieOfPower function
+        /// @dev Cookie of Power is NFT #1 and should be owned by bob after it is called
+        /// @dev assumes that the block number ends in 420
+        /// @dev Starts prank on bob and rolls the vm to a block number ending in 420
+        /// @dev Logs the block number after the warp
         vm.startPrank(address(bob));
         vm.roll(69420);
         emit log_named_uint("Block Number: ", block.number);
@@ -356,15 +357,11 @@ contract CookiesTest is Test {
             address owner = cookies.lookupOwner(i);
             emit log_named_address(Strings.toString(i), owner);
         }
-    }
 
-    /// @notice Tests the takeCookieOfPower function
-    /// @dev Cookie of Power is NFT #1 and should be owned by the contract deployer after it is called
-    /// @dev assumes that the block number does not end in 420
-    function testTakeCookieOfPowerFail()public {
-        // Starts prank on bob and rolls the vm to a block number not ending in 420
-        // Logs the block number after the warp
-        vm.startPrank(address(bob));
+        /// @notice Tests the fail case of the takeCookieOfPower function
+        /// @dev Cookie of Power is NFT #1 and should be owned by bob after it is called
+        /// @dev assumes that the block number does not end in 420 when alice tries to buy it
+        vm.startPrank(address(alice));
         vm.roll(69421);
         emit log_named_uint("Block Number: ", block.number);
 
@@ -375,7 +372,7 @@ contract CookiesTest is Test {
         vm.stopPrank();
 
         // Contract deployer should own Cookie of Power
-        assertEq(cookies.lookupOwner(1), address(this));
+        assertEq(cookies.lookupOwner(1), address(bob));
 
         // Contract deployer should own Cookie of Power
         emit log_string("NFT Owners: ");
@@ -386,9 +383,10 @@ contract CookiesTest is Test {
     }
 
     /// @notice Tests the takeCookieOfH4X0R function
-    /// @dev Cookie of H4X0R is NFT #1337 and should be owned by bob after it is called
+    /// @dev Tests both the pass and fail cases
     /// @dev assumes that the block number is 69420
-    function testTakeCookieOfH4X0RPass()public {
+    function testTakeCookieOfH4X0R()public {
+        /// @notice Tests the Passing Case
         // Starts prank on bob and rolls the vm to a block number of 69420
         // Logs the block number after the warp
         vm.startPrank(address(bob));
@@ -413,31 +411,27 @@ contract CookiesTest is Test {
                 emit log_named_address(Strings.toString(i), owner);
             }
         }
-    }
-
-    /// @notice Tests the takeCookieOfH4X0R function
-    /// @dev Cookie of H4X0R is NFT #1337 and should be owned by the contract deployer after it is called
-    /// @dev assumes that the block number is not 69420
-    function testTakeCookieOfH4X0RFail()public {
-        // Starts prank on bob and rolls the vm to a block number not of 69420
+  
+        /// @notice Starts prank on alice to test failing case
         // Logs the block number after the warp
-        vm.startPrank(address(bob));
+        vm.startPrank(address(alice));
         emit log_named_uint("Block Number: ", block.number);
 
         // Bob tries to buy Cookie of H4X0R
         // Anticipated revert because Bob does not own any of the other cookies
         vm.expectRevert("Must own one of the other cookies");
         cookies.takeCookieOfH4X0R();
-        vm.stopPrank();
+
 
         // Contract deployer should own Cookie of H4X0R
-        assertEq(cookies.lookupOwner(1337), address(this));
+        assertEq(cookies.lookupOwner(1337), address(bob));
+        vm.stopPrank();
 
         // Log NFT owners after Bob tries to take Cookie of H4X0R
         emit log_string("NFT Owners: ");
         for (uint256 i = 1; i <= 6; i ++) {
             if (i == 6) {
-                emit log_named_address(Strings.toString(1337), address(this));
+                emit log_named_address(Strings.toString(1337), address(bob));
             } else {
                 address owner = cookies.lookupOwner(i);
                 emit log_named_address(Strings.toString(i), owner);
