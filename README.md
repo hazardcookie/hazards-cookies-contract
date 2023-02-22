@@ -1,19 +1,19 @@
 # Keys of XRPL
 ## How to play
-### Key of Power 💪
-To claim the key of power the block number must end in 420.
+### Cookie of Power 💪
+To claim the Cookie of power the block number must end in 420.
 
-### Key of Wisdom 🧠
-To claim the key of wisdom, submit a number. If the hash of that number is greater than the hash of the previous number, you get the key. 
+### Cookie of Wisdom 🧠
+To claim the Cookie of wisdom, submit a number. If the hash of that number is greater than the hash of the previous number, you get the cookie. 
 
-### Key of Time ⏳
-Anyone can claim this key if it has been greater than 1 week since the last claim date 
+### Cookie of Time ⏳
+Anyone can claim this cookie if it has been greater than 1 week since the last claim date 
 
-### Key of War 😈
-If the block number is a even number, anyone can claim this key.
+### Cookie of War 😈
+If the block number is a even number, anyone can claim this cookie.
 
-### Key of Wealth 💸
-Anyone can claim this key if they spend more than the previous claimer.
+### Cookie of Wealth 💸
+Anyone can claim this cookie if they spend more than the previous claimer.
 
 ## Deployment Details
 Deployer: `0x67F141221bbDa7162373eC57aCbFa4E9564750e8`
@@ -40,6 +40,6 @@ forge verify-contract  --chain-id 1440001 --verifier=blockscout \
 
 Local blockchain:
 ```
-forge script script/Cookies.s.sol:CookiesScript --fork-url http://localhost:8545 \
+forge script script/HazardsCookies.s.sol:CookiesScript --fork-url http://localhost:8545 \
 --private-key $PRIVATE_KEY --broadcast
 ```
