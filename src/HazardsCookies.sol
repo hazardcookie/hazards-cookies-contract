@@ -84,6 +84,7 @@ contract HazardsCookiesV4 is ERC721 {
     }
 
     /// @notice Takes the Cookie of Wisdom
+    /// @param number a number that is hashed and compared to the lastNumber
     /// @dev requires that the caller has provided a number that
     /// @dev when hashed is greater than the hashed lastNumber.
     /// @dev if true: it transfers the Cookie of wisdom to the msg.sender
