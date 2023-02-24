@@ -110,7 +110,7 @@ contract HazardsCookiesV4 is ERC721 {
         _transfer(ownerOf(COOKIE_OF_H4X0R), payable(msg.sender), COOKIE_OF_H4X0R);
     }
 
-    /// @notice gets the svg
+    /// @notice gets the svg of a cookie and applies the color
     /// @param tokenId id of the token
     /// @return string svg of the Cookie
     function getSVG(uint256 tokenId)private view returns(string memory) {
