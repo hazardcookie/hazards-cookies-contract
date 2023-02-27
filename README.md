@@ -16,11 +16,11 @@ If the block number is a even number, anyone can claim this cookie.
 Anyone can claim this cookie if they spend more than the previous claimer.
 
 ## Deployment Details
-Deployer: `0x67F141221bbDa7162373eC57aCbFa4E9564750e8`
+Deployer: `0xd8533cb6f083177c26222b97c0b90e52e9135aaa`
 
-Deployed to: `0xDA8969c0E047e12bfda6281283C7A7Bfdd0B70F5`
+Deployed to: `0x392F814DA5c3C0B9e8ee2742C8c85839e9171989`
 
-Transaction hash: `0x06dadc0fe29d695592000d507155a8f7c5d823aabbe564c2406c5e5d5509a3fe`
+Transaction hash: `0x2de5cdc54712193d1e9200163a2ecdc4d02a78e1e63ead9ace8d8ab7f0c1892f`
 
 rpc: `https://rpc-evm-sidechain.xrpl.org`
 
@@ -28,18 +28,18 @@ rpc: `https://rpc-evm-sidechain.xrpl.org`
 Deploy the contract with the following command:
 ```
 $ forge create --rpc-url https://rpc-evm-sidechain.xrpl.org \
-    --private-key <privateKey> \
-    src/Cookies.sol:HazardsCookiesV4
+    --private-key <private-key> \
+    src/HazardsCookiesV5.sol:HazardsCookiesV5
 ```
 
 Verify the contract with the following command:
 ```
 forge verify-contract  --chain-id 1440001 --verifier=blockscout \
---verifier-url=https://evm-sidechain.peersyst.tech/api  <contract>   src/Cookies.sol:HazardsCookiesV3
+--verifier-url=https://evm-sidechain.peersyst.tech/api  <contract>   src/HazardsCookiesV5.sol:HazardsCookiesV5
 ```
 
 Local blockchain:
 ```
-forge script script/HazardsCookies.s.sol:CookiesScript --fork-url http://localhost:8545 \
+forge script script/Deploy.s.sol:Deploy --fork-url http://localhost:8545 \
 --private-key $PRIVATE_KEY --broadcast
 ```
