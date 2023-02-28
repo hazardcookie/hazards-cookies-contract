@@ -7,6 +7,7 @@ import "lib/openzeppelin-contracts/contracts/utils/Base64.sol";
 /// @title Hazard's Cookies 
 /// @author @hazardcookie
 /// @notice This NFT contract has 5 cookies, each claimable with different conditions
+/// @dev This version of the contract has a multi-call function to return all owners and metadata
 contract HazardsCookiesV4 is ERC721 {
     uint256 public constant COOKIE_OF_POWER = 1;
     uint256 public constant COOKIE_OF_WISDOM = 2;
